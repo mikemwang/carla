@@ -75,7 +75,7 @@ namespace s11n {
     void Reset(uint32_t total_point_count) {
       std::memset(_header.data() + Index::SIZE, 0, sizeof(uint32_t) * GetChannelCount());
       _points.clear();
-      _points.reserve(3u * total_point_count);
+      _points.reserve(4u * total_point_count);
     }
 
     void WritePoint(uint32_t channel, rpc::Location point) {
@@ -84,6 +84,7 @@ namespace s11n {
       _points.emplace_back(point.x);
       _points.emplace_back(point.y);
       _points.emplace_back(point.z);
+      _points.emplace_back(static_cast<float>(channel));
     }
 
   private:
