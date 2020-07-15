@@ -8,7 +8,7 @@
 #include <carla/image/ImageConverter.h>
 #include <carla/image/ImageIO.h>
 #include <carla/image/ImageView.h>
-#include <carla/pointcloud/PointCloudIO.h>
+//#include <carla/pointcloud/PointCloudIO.h>
 #include <carla/sensor/SensorData.h>
 #include <carla/sensor/data/CollisionEvent.h>
 #include <carla/sensor/data/IMUMeasurement.h>
@@ -200,11 +200,11 @@ static std::string SaveImageToDisk(T &self, std::string path, EColorConverter cc
   }
 }
 
-template <typename T>
-static std::string SavePointCloudToDisk(T &self, std::string path) {
-  carla::PythonUtil::ReleaseGIL unlock;
-  return carla::pointcloud::PointCloudIO::SaveToDisk(std::move(path), self.begin(), self.end());
-}
+//template <typename T>
+//static std::string SavePointCloudToDisk(T &self, std::string path) {
+//  carla::PythonUtil::ReleaseGIL unlock;
+//  return carla::pointcloud::PointCloudIO::SaveToDisk(std::move(path), self.begin(), self.end());
+//}
 
 void export_sensor_data() {
   using namespace boost::python;
@@ -251,13 +251,13 @@ void export_sensor_data() {
     .add_property("channels", &csd::LidarMeasurement::GetChannelCount)
     .add_property("raw_data", &GetRawDataAsBuffer<csd::LidarMeasurement>)
     .def("get_point_count", &csd::LidarMeasurement::GetPointCount, (arg("channel")))
-    .def("save_to_disk", &SavePointCloudToDisk<csd::LidarMeasurement>, (arg("path")))
+    //.def("save_to_disk", &SavePointCloudToDisk<csd::LidarMeasurement>, (arg("path")))
     .def("__len__", &csd::LidarMeasurement::size)
     .def("__iter__", iterator<csd::LidarMeasurement>())
-    .def("__getitem__", +[](const csd::LidarMeasurement &self, size_t pos) -> cr::Location {
+    .def("__getitem__", +[](const csd::LidarMeasurement &self, size_t pos) -> cr::LocationAndChannel {
       return self.at(pos);
     })
-    .def("__setitem__", +[](csd::LidarMeasurement &self, size_t pos, const cr::Location &point) {
+    .def("__setitem__", +[](csd::LidarMeasurement &self, size_t pos, const cr::LocationAndChannel &point) {
       self.at(pos) = point;
     })
     .def(self_ns::str(self_ns::self))
